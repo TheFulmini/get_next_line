@@ -5,16 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/14 12:22:17 by afulmini          #+#    #+#             */
-/*   Updated: 2020/12/19 23:57:25 by afulmini         ###   ########.fr       */
+/*   Created: 2020/10/21 09:54:36 by afulmini          #+#    #+#             */
+/*   Updated: 2021/02/10 13:28:46 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int		nl_line(char *str)
+/*
+**	returns 1 if there is '\n' in the string
+**	otherwise return 0
+*/
+
+static int			nl_line(char *str)
 {
-	int		i;
+	int				i;
 
 	i = 0;
 	if (!str)
@@ -28,10 +33,14 @@ static int		nl_line(char *str)
 	return (0);
 }
 
-static char		*recuperate_line(char *str)
+/*
+**	return a malloc string from the first line of str or str if none '\ n'
+*/
+
+static char			*recup_line(char *str)
 {
-	int		i;
-	char	*dest;
+	int				i;
+	char			*dest;
 
 	i = 0;
 	if (!str)
@@ -55,11 +64,17 @@ static char		*recuperate_line(char *str)
 	return (dest);
 }
 
-static char		*save_static_line(char *str)
+/*
+**	Remove the first line encountered and return a malloc
+**  from the rest of the chain
+**	free the old str
+*/
+
+static char			*save_static(char *str)
 {
-	int		i;
-	int		j;
-	char	*dest;
+	int				i;
+	int				j;
+	char			*dest;
 
 	i = 0;
 	if (!str)
@@ -83,10 +98,15 @@ static char		*save_static_line(char *str)
 	return (dest);
 }
 
-static int		check_input(char *buffer, const int fd, char **line)
+/*
+**	check the inputs of get_next_line()
+**	and free buffer if not valid inputs
+*/
+
+static int			check_input(char *buffer, const int fd, char **line)
 {
 	if (fd < 0 || !line || BUFFER_SIZE <= 0 || !buffer
-			|| read(fd, NULL, 0) < 0)
+	|| read(fd, NULL, 0) < 0)
 	{
 		if (buffer)
 			free(buffer);
@@ -96,11 +116,24 @@ static int		check_input(char *buffer, const int fd, char **line)
 	return (1);
 }
 
-int				get_next_line(const int fd, char **line)
+/*
+**	1# We check fd, line and buffer_size: return -1 if problems.
+**	2# We allocate a buffer of the size of buffer_size.
+**	3# As long as str_static does not contain a '\ n'
+***		and the read has not returned 0(result)
+**		- we read a packet of BUFFER_SIZE oct.
+**		- we add this package to the static variable.
+**	4# we get the line to send back.
+**	5# we trunk the static variable of the returned row.
+**	6# If the reading returned 0 and static variable empty,
+**		we returned 0, otherwise 1 because there is still something to read.
+*/
+
+int					get_next_line(const int fd, char **line)
 {
-	static char	*str_static;
-	char		*buffer;
-	int			result;
+	static char		*str_static;
+	char			*buffer;
+	int				result;
 
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!check_input(buffer, fd, line))
@@ -118,8 +151,8 @@ int				get_next_line(const int fd, char **line)
 		str_static = ft_strjoin(str_static, buffer);
 	}
 	free(buffer);
-	*line = recuperate_line(str_static);
-	str_static = save_static_line(str_static);
+	*line = recup_line(str_static);
+	str_static = save_static(str_static);
 	result = (result == 0 && ft_strlen(str_static) == 0) ? 0 : 1;
 	return (result);
 }

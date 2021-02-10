@@ -5,29 +5,29 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/19 23:02:12 by afulmini          #+#    #+#             */
-/*   Updated: 2020/12/19 23:32:40 by afulmini         ###   ########.fr       */
+/*   Created: 2020/10/29 17:18:56 by afulmini          #+#    #+#             */
+/*   Updated: 2021/02/10 13:29:25 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
-size_t		ft_strlen(const char *str)
+size_t			ft_strlen(const char *str)
 {
-	int	i;
+	int			i;
 
-	i = 0;
 	if (!str)
 		return (0);
+	i = 0;
 	while (str[i])
 		i++;
 	return (i);
 }
 
-char		*ft_strnew(size_t size)
+char			*ft_strnew(size_t size)
 {
-	char	*str;
-	size_t	i;
+	char		*str;
+	size_t		i;
 
 	if (size <= 0)
 		return (NULL);
@@ -40,16 +40,16 @@ char		*ft_strnew(size_t size)
 	return (str);
 }
 
-void		*ft_memmove(void *dest, const void *src, size_t len)
+void			*ft_memmove(void *dest, const void *src, size_t len)
 {
-	char	*d;
-	char	*s;
+	char		*d;
+	char		*s;
 
 	d = (char *)dest;
 	s = (char *)src;
 	if (dest == src)
 		return (dest);
-	if (s > d)
+	if (s < d)
 	{
 		while (len--)
 			*(d + len) = *(s + len);
@@ -60,19 +60,19 @@ void		*ft_memmove(void *dest, const void *src, size_t len)
 	return (dest);
 }
 
-char		*ft_strjoin(char const *s1, char const *s2)
+char			*ft_strjoin(char const *s1, char const *s2)
 {
-	char	*dest;
-	int		size_s1;
-	int		size_s2;
-	int		size;
+	char		*dest;
+	int			size_s1;
+	int			size_s2;
+	int			size_total;
 
 	if (!s1 && !s2)
 		return (NULL);
 	size_s1 = ft_strlen(s1);
 	size_s2 = ft_strlen(s2);
-	size = size_s1 + size_s2;
-	dest = ft_strnew(size);
+	size_total = size_s1 + size_s2;
+	dest = ft_strnew(size_total);
 	if (!dest)
 	{
 		free((char *)s1);
@@ -80,7 +80,7 @@ char		*ft_strjoin(char const *s1, char const *s2)
 	}
 	ft_memmove(dest, s1, size_s1);
 	ft_memmove(dest + size_s1, s2, size_s2);
-	dest[size] = '\0';
+	dest[size_total] = '\0';
 	free((char *)s1);
 	return (dest);
 }
