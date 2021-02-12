@@ -6,7 +6,7 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/21 09:54:36 by afulmini          #+#    #+#             */
-/*   Updated: 2021/02/10 13:30:07 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/02/11 15:06:29 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int			nl_line(char *str)
 }
 
 /*
-**	return a malloc string from the first line of str or str if none '\ n'
+**	return a malloc string from the first line of str or str if none '\n'
 */
 
 static char			*recup_line(char *str)

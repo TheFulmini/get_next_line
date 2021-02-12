@@ -6,12 +6,15 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/21 09:54:36 by afulmini          #+#    #+#             */
-/*   Updated: 2021/02/10 13:28:46 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/02/12 18:16:42 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
 /*
 **	returns 1 if there is '\n' in the string
 **	otherwise return 0
@@ -102,7 +105,7 @@ static char			*save_static(char *str)
 **	check the inputs of get_next_line()
 **	and free buffer if not valid inputs
 */
-
+/*
 static int			check_input(char *buffer, const int fd, char **line)
 {
 	if (fd < 0 || !line || BUFFER_SIZE <= 0 || !buffer
@@ -111,10 +114,11 @@ static int			check_input(char *buffer, const int fd, char **line)
 		if (buffer)
 			free(buffer);
 		line = NULL;
-		return (0);
+		return (-1);
 	}
 	return (1);
 }
+*/
 
 /*
 **	1# We check fd, line and buffer_size: return -1 if problems.
@@ -133,10 +137,11 @@ int					get_next_line(const int fd, char **line)
 {
 	static char		*str_static;
 	char			*buffer;
+    char            *temp;
 	int				result;
 
-	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!check_input(buffer, fd, line))
+	if (fd < 0 || !line || BUFFER_SIZE <= 0 ||
+        !(buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
 	result = 1;
 	while (!nl_line(str_static) && result != 0)
@@ -146,9 +151,10 @@ int					get_next_line(const int fd, char **line)
 		{
 			free(buffer);
 			return (-1);
-		}
+        }
 		buffer[result] = '\0';
-		str_static = ft_strjoin(str_static, buffer);
+        temp = str_static;
+		str_static = ft_strjoin(temp, buffer);
 	}
 	free(buffer);
 	*line = recup_line(str_static);
