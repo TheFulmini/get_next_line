@@ -6,7 +6,7 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/21 09:54:36 by afulmini          #+#    #+#             */
-/*   Updated: 2021/02/12 18:16:42 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/02/13 12:34:27 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
-/*
-**	returns 1 if there is '\n' in the string
-**	otherwise return 0
-*/
 
 static int			nl_line(char *str)
 {
@@ -36,10 +32,6 @@ static int			nl_line(char *str)
 	return (0);
 }
 
-/*
-**	return a malloc string from the first line of str or str if none '\ n'
-*/
-
 static char			*recup_line(char *str)
 {
 	int				i;
@@ -48,7 +40,8 @@ static char			*recup_line(char *str)
 	i = 0;
 	if (!str)
 	{
-		dest = (char *)malloc(1);
+		if (!(dest = (char *)malloc(1)))
+			free(dest);
 		dest[0] = '\0';
 		return (dest);
 	}
@@ -67,12 +60,6 @@ static char			*recup_line(char *str)
 	return (dest);
 }
 
-/*
-**	Remove the first line encountered and return a malloc
-**  from the rest of the chain
-**	free the old str
-*/
-
 static char			*save_static(char *str)
 {
 	int				i;
@@ -90,9 +77,11 @@ static char			*save_static(char *str)
 		return (NULL);
 	}
 	j = 0;
-	dest = (char *)malloc(sizeof(char) * (ft_strlen(str) - i));
-	if (!dest)
+	if (!(dest = (char *)malloc(sizeof(char) * (ft_strlen(str) - i))))
+	{
+		free(str);
 		return (NULL);
+	}
 	i += 1;
 	while (str[i])
 		dest[j++] = str[i++];
@@ -101,47 +90,14 @@ static char			*save_static(char *str)
 	return (dest);
 }
 
-/*
-**	check the inputs of get_next_line()
-**	and free buffer if not valid inputs
-*/
-/*
-static int			check_input(char *buffer, const int fd, char **line)
-{
-	if (fd < 0 || !line || BUFFER_SIZE <= 0 || !buffer
-	|| read(fd, NULL, 0) < 0)
-	{
-		if (buffer)
-			free(buffer);
-		line = NULL;
-		return (-1);
-	}
-	return (1);
-}
-*/
-
-/*
-**	1# We check fd, line and buffer_size: return -1 if problems.
-**	2# We allocate a buffer of the size of buffer_size.
-**	3# As long as str_static does not contain a '\ n'
-***		and the read has not returned 0(result)
-**		- we read a packet of BUFFER_SIZE oct.
-**		- we add this package to the static variable.
-**	4# we get the line to send back.
-**	5# we trunk the static variable of the returned row.
-**	6# If the reading returned 0 and static variable empty,
-**		we returned 0, otherwise 1 because there is still something to read.
-*/
-
 int					get_next_line(const int fd, char **line)
 {
 	static char		*str_static;
 	char			*buffer;
-    char            *temp;
 	int				result;
 
 	if (fd < 0 || !line || BUFFER_SIZE <= 0 ||
-        !(buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+		!(buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
 	result = 1;
 	while (!nl_line(str_static) && result != 0)
@@ -151,10 +107,9 @@ int					get_next_line(const int fd, char **line)
 		{
 			free(buffer);
 			return (-1);
-        }
+		}
 		buffer[result] = '\0';
-        temp = str_static;
-		str_static = ft_strjoin(temp, buffer);
+		str_static = ft_strjoin(str_static, buffer);
 	}
 	free(buffer);
 	*line = recup_line(str_static);
