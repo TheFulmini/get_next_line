@@ -17,6 +17,12 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+static void			ft_free(char **pointer)
+{
+	freet(*pointer);
+	*pointer = NULL;
+}
+
 static int			nl_line(char *str)
 {
 	int				i;
@@ -73,17 +79,11 @@ static char			*save_static(char *str)
 	while (str[i] && str[i] != '\n')
 		i++;
 	if (!str[i])
-	{
-		free(str);
-		return (NULL);
-	}
+		ft_free(&str);
 	j = 0;
 	dest = (char *)malloc(sizeof(char) * (ft_strlen(str) - i));
 	if (!dest)
-	{
-		free(str);
-		return (NULL);
-	}
+		ft_free(&str);
 	i += 1;
 	while (str[i])
 		dest[j++] = str[i++];
