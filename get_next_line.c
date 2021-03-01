@@ -5,113 +5,97 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/21 09:54:36 by afulmini          #+#    #+#             */
-/*   Updated: 2021/02/13 12:34:27 by afulmini         ###   ########.fr       */
+/*   Created: 2021/02/14 19:45:06 by afulmini          #+#    #+#             */
+/*   Updated: 2021/03/01 11:07:25 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
 
-static void			ft_free(char **pointer)
+int		has_newline(char *str)
 {
-	free(*pointer);
-	*pointer = NULL;
-}
-
-static int			nl_line(char *str)
-{
-	int				i;
-
-	i = 0;
 	if (!str)
 		return (0);
-	while (str[i])
+	while (*str)
 	{
-		if (str[i] == '\n')
+		if (*str == '\n')
 			return (1);
-		i++;
+		str++;
 	}
 	return (0);
 }
 
-static char			*recup_line(char *str)
+char	*trim_after_newline(char *s)
 {
-	int				i;
-	char			*dest;
+	char	*str;
+	int		strlen;
 
-	i = 0;
-	if (!str)
+	strlen = 0;
+	if (!s)
+		return (0);
+	while (s[strlen] && s[strlen] != '\n')
+		strlen++;
+	if (!(str = malloc(sizeof(char) * (strlen + 1))))
+		return (0);
+	str[strlen] = '\0';
+	while (--strlen >= 0)
 	{
-		if (!(dest = (char *)malloc(1)))
-			free(dest);
-		dest[0] = '\0';
-		return (dest);
+		str[strlen] = s[strlen];
 	}
-	while (str[i] && str[i] != '\n')
-		i++;
-	dest = (char *)malloc(sizeof(char) * (i + 1));
-	if (!dest)
-		return (NULL);
-	i = 0;
-	while (str[i] && str[i] != '\n')
-	{
-		dest[i] = str[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (dest);
+	return (str);
 }
 
-static char			*save_static(char *str)
+char	*trim_before_newline(char *s)
 {
-	int				i;
-	int				j;
-	char			*dest;
+	char	*str;
+	int		i;
+	int		j;
 
 	i = 0;
-	if (!str)
-		return (NULL);
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (!str[i])
-		ft_free(&str);
 	j = 0;
-	if (!(dest = (char *)malloc(sizeof(char) * (ft_strlen(str) - i))))
-		ft_free(&str);
-	i += 1;
-	while (str[i])
-		dest[j++] = str[i++];
-	dest[j] = '\0';
-	free(str);
-	return (dest);
+	if (!s)
+		return (0);
+	while (s[i] && s[i] != '\n')
+		i++;
+	if (!s[i])
+	{
+		free(s);
+		return (0);
+	}
+	if (!(str = malloc(sizeof(char) * ((gnl_strlen(s) - i) + 1))))
+		return (0);
+	i++;
+	while (s[i])
+		str[j++] = s[i++];
+	str[j] = '\0';
+	free(s);
+	return (str);
 }
 
-int					get_next_line(const int fd, char **line)
+int		get_next_line(int fd, char **line)
 {
-	static char		*str_static;
-	char			*buffer;
-	int				result;
+	char		*buf;
+	static char	*read_line;
+	int			r;
 
 	if (fd < 0 || !line || BUFFER_SIZE <= 0 ||
-		!(buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+		!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
-	result = 1;
-	while (!nl_line(str_static) && result != 0)
+	r = 1;
+	while (!has_newline(read_line) && r != 0)
 	{
-		result = read(fd, buffer, BUFFER_SIZE);
-		if (result == -1)
+		if ((r = read(fd, buf, BUFFER_SIZE)) == -1)
 		{
-			free(buffer);
+			free(buf);
 			return (-1);
 		}
-		buffer[result] = '\0';
-		str_static = ft_strjoin(str_static, buffer);
+		buf[r] = '\0';
+		read_line = gnl_strjoin(read_line, buf);
 	}
-	free(buffer);
-	*line = recup_line(str_static);
-	str_static = save_static(str_static);
-	result = (result == 0 && ft_strlen(str_static) == 0) ? 0 : 1;
-	return (result);
+	free(buf);
+	*line = trim_after_newline(read_line);
+	read_line = trim_before_newline(read_line);
+	if (r == 0)
+		return (0);
+	return (1);
 }
