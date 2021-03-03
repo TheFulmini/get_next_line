@@ -6,7 +6,7 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 17:37:12 by afulmini          #+#    #+#             */
-/*   Updated: 2021/03/01 11:09:06 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/03/03 18:06:58 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ char	*trim_before_newline(char *s)
 		free(s);
 		return (0);
 	}
-	if (!(str = malloc(sizeof(char) * ((gnl_strlen(s) - i) + 1))))
+	if (!(str = malloc(sizeof(char) * ((ft_strlen(s) - i) + 1))))
 		return (0);
 	i++;
 	while (s[i])
@@ -90,7 +90,7 @@ int		get_next_line(int fd, char **line)
 			return (-1);
 		}
 		buf[r] = '\0';
-		arr_read_line[fd] = gnl_strjoin(arr_read_line[fd], buf);
+		arr_read_line[fd] = ft_strjoin(arr_read_line[fd], buf);
 	}
 	free(buf);
 	*line = trim_after_newline(arr_read_line[fd]);

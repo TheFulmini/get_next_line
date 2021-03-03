@@ -6,7 +6,7 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/15 21:53:51 by afulmini          #+#    #+#             */
-/*   Updated: 2021/03/01 11:07:46 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/03/03 18:06:58 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # endif
 
 int		get_next_line(int fd, char **line);
-size_t	gnl_strlen(const char *s);
-char	*gnl_strjoin(char const *s1, char const *s2);
+size_t	ft_strlen(const char *s);
+char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif

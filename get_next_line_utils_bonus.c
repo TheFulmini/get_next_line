@@ -6,13 +6,13 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/17 17:37:33 by afulmini          #+#    #+#             */
-/*   Updated: 2021/03/01 11:08:30 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/03/03 18:07:24 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-size_t	gnl_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
 	size_t	len;
 
@@ -24,7 +24,7 @@ size_t	gnl_strlen(const char *s)
 	return (len);
 }
 
-void	*gnl_memmove(void *dst, const void *src, size_t len)
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
 	unsigned char	*dst1;
 	unsigned char	*src1;
@@ -49,21 +49,21 @@ void	*gnl_memmove(void *dst, const void *src, size_t len)
 	return (dst);
 }
 
-char	*gnl_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*str;
-	int		len_s1;
-	int		len_s2;
+	int		len1;
+	int		len2;
 
 	if (!s1 && !s2)
 		return (0);
-	len_s1 = gnl_strlen(s1);
-	len_s2 = gnl_strlen(s2);
-	if (!(str = malloc(sizeof(char) * (len_s1 + len_s2 + 1))))
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	if (!(str = malloc(sizeof(char) * (len1 + len2 + 1))))
 		return (0);
-	gnl_memmove(str, s1, len_s1);
-	gnl_memmove(str + len_s1, s2, len_s2);
-	str[len_s1 + len_s2] = '\0';
+	ft_memmove(str, s1, len1);
+	ft_memmove(str + len1, s2, len2);
+	str[len1 + len2] = '\0';
 	free((char *)s1);
 	return (str);
 }
