@@ -6,7 +6,7 @@
 /*   By: afulmini <afulmini@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 17:37:12 by afulmini          #+#    #+#             */
-/*   Updated: 2021/03/03 18:06:58 by afulmini         ###   ########.fr       */
+/*   Updated: 2021/03/04 13:29:45 by afulmini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int		get_next_line(int fd, char **line)
 	int			r;
 
 	if (fd < 0 || !line || BUFFER_SIZE <= 0 || fd >= OPEN_MAX ||
+		BUFFER_SIZE == 2147483647 ||
 		!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
 	r = 1;
